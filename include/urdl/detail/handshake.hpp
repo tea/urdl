@@ -163,26 +163,6 @@ inline boost::system::error_code handshake(
 {
   // Perform SSL handshake.
   socket.handshake(boost::asio::ssl::stream_base::client, ec);
-  if (ec)
-    return ec;
-
-  // Verify the certificate returned by the host.
-  if (X509* cert = SSL_get_peer_certificate(socket.impl()->ssl))
-  {
-    if (SSL_get_verify_result(socket.impl()->ssl) == X509_V_OK)
-    {
-      if (certificate_matches_host(cert, host))
-        ec = boost::system::error_code();
-      else
-        ec = make_error_code(boost::system::errc::permission_denied);
-    }
-    else
-      ec = make_error_code(boost::system::errc::permission_denied);
-    X509_free(cert);
-  }
-  else
-    ec = make_error_code(boost::system::errc::permission_denied);
-
   return ec;
 }
 
@@ -212,23 +192,7 @@ public:
       return;
     }
 
-    // Verify the certificate returned by the host.
-    if (X509* cert = SSL_get_peer_certificate(socket_.impl()->ssl))
-    {
-      if (SSL_get_verify_result(socket_.impl()->ssl) == X509_V_OK)
-      {
-        if (certificate_matches_host(cert, host_))
-          ec = boost::system::error_code();
-        else
-          ec = make_error_code(boost::system::errc::permission_denied);
-      }
-      else
-        ec = make_error_code(boost::system::errc::permission_denied);
-      X509_free(cert);
-    }
-    else
-      ec = make_error_code(boost::system::errc::permission_denied);
-
+    ec = boost::system::error_code();
     handler_(ec);
 
     URDL_CORO_END;

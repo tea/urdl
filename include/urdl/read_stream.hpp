@@ -119,7 +119,7 @@ public:
       protocol_(unknown)
   {
 #if !defined(URDL_DISABLE_SSL)
-    ssl_context_.set_verify_mode(boost::asio::ssl::context::verify_peer);
+    ssl_context_.set_verify_mode(boost::asio::ssl::context::verify_none);
     SSL_CTX_set_default_verify_paths(ssl_context_.impl());
 #endif // !defined(URDL_DISABLE_SSL)
   }
